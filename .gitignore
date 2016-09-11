@@ -11,3 +11,5 @@ NAMESPACE
 src/*.so
 man/*.Rd
 src/*.o
+_cache
+inst/doc

@@ -1,0 +1,74 @@
+---
+title: "Getting started"
+author: "Stef van Buuren"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+bibliography: bibliography.bib
+vignette: >
+  %\VignetteIndexEntry{Getting started}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+The `mice` package [@vanbuuren2011a] can be used to 
+
+- Fill in missing data by $m$ replacement values (imputations)
+- Analyse the imputed data
+- Pool the resulting statistical estimates across imputed data sets
+
+This vignettes contain a bare bones example of these three steps.
+
+<!-- ## Multiple imputation cycle -->
+
+<!-- ![Multiple imputation cycle](figure1acropped.pdf) -->
+
+## Installation
+
+If you have not yet done so, install and attach the `mice` package by
+
+```{r, eval = FALSE}
+install.packages("mice")
+library("mice")
+```
+
+
+```{r, echo = FALSE, message = FALSE}
+options(digits = 3, width = 65)
+library("mice", quietly = TRUE)
+```
+
+## Data
+
+The data frame `nhanes` is a toy dataset taken from Schafer [@schafer1997]. It is one the built-in datasets in `mice`. It has 25 rows. The first ten rows are
+
+```{r}
+head(nhanes, 10)
+```
+
+The data set has four variables: `age` (age group), `bmi` (body mass index), `hyp` (hypertension status) and `chl` (cholesterol level). As usual in `R`, the missing values are represented as `NA`.
+
+## Minimum syntax for full multiple imputation analysis
+
+Suppose we are interested in predicting cholesterol level as a function of age and body mass index. Using the standard `lm()` model, we could specify something like:
+
+```{r}
+summary(lm(chl ~ age + bmi, data = nhanes))
+```
+
+Depending on your setting in `options("na.action")`, this statement will either remove all incomplete rows (known as complete case analysis), or produce an error. 
+
+Just three functions are needed to impute the `nhanes` data, to analyze the imputed data, and to pool the results:
+
+```{r}
+imp <- mice(nhanes, print = FALSE, seed = 13212)
+fit <- with(imp, lm(chl ~ age + bmi))
+est <- pool(fit)
+summary(est)
+```
+
+The `mice()` function fills in the missing entries in the `nhanes` data and stores the result on an object named `imp` (which has class `mids`). It uses the default number of imputations (5). The `with()` function repeats the linear regression model specified by `lm()` to each of the five completed data sets, and stores the result in an object named `fit` (which has class `mira`). The `pool()` function combines the five analyses into one using Rubin's pooling rules, and stores the result in an object named `est` (which has class `mipo`). The `summary()` function just outputs the combined results. We find that both age and body mass index are significant predictors of  cholesterol level. In general, the multiple imputation solution is preferable to complete-case analysis.
+
+## Further reading
+
+The steps given above are a quick and dirty approach that puts a lot of faith in the defaults defined in the `mice()` function. These defaults are not necessarily the best for the data. The `mice` library has a number of functions that help the user to evaluate and steer the imputation process. Other vignettes describe the steps in more detail. 
+
