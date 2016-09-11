@@ -1,11 +1,11 @@
 ---
-title: "Generating imputations"
+title: "Imputation cycle"
 author: "Stef van Buuren"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 bibliography: bibliography.bib
 vignette: >
-  %\VignetteIndexEntry{Generating imputations}
+  %\VignetteIndexEntry{Imputation cycle}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
