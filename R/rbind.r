@@ -190,7 +190,7 @@ rbind.mids <- function(x, y = NULL, ...) {
       y_null <- is.null(y$imp[[j]])
       if(x_null && !y_null)
         x$imp[[j]] <- as.data.frame(matrix(NA, nrow = x$nmis[j], ncol = x$m, dimnames = list(NULL, seq_len(x$m))))
-      if(!x_null && y_null)
+      else if(!x_null && y_null)
         y$imp[[j]] <- as.data.frame(matrix(NA, nrow = y$nmis[j], ncol = y$m, dimnames = list(NULL, seq_len(y$m))))
       imp[[j]] <- rbind(x$imp[[j]], y$imp[[j]])
     }
