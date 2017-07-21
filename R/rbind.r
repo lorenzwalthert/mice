@@ -186,9 +186,18 @@ rbind.mids <- function(x, y = NULL, ...) {
     # The original data of y will be binded into the multiple imputed dataset, including the imputed values of y.
     imp <- vector("list", ncol(x$data))
     for (j in 1:ncol(x$data)) {
-      if(!is.null(x$imp[[j]]) | !is.null(y$imp[[j]])) {
-        imp[[j]] <- rbind(x$imp[[j]], y$imp[[j]])
+      x_null <- is.null(x$imp[[j]])
+      y_null <- is.null(y$imp[[j]])
+      if (x_null & y_null) next()
+      if(x_null){
+        x$imp[[j]] <- as.data.frame(matrix(NA, nrow = x$nmis[j], ncol = x$m, 
+                                           dimnames = list(NULL, seq_len(x$m))))
       }
+      if(y_null){
+        y$imp[[j]] <-  as.data.frame(matrix(NA, nrow = y$nmis[j], ncol = y$m, 
+                              dimnames = list(NULL, seq_len(y$m))))
+      }
+      imp[[j]] <- rbind(x$imp[[j]], y$imp[[j]])
     }
     names(imp) <- varnames
     
